@@ -19,6 +19,7 @@ $result = $conn->query("SELECT * FROM jobs");
     <title>Available Jobs</title>
 </head>
 <body>
+<a href="employer_dashboard.php">Return</a>
     <h1>Available Jobs</h1>
     <div id="job-list">
         <?php

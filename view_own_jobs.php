@@ -20,6 +20,7 @@ $result = $conn->query("SELECT * FROM jobs WHERE employer_id = $employer_id");
     <title>My Job Posts</title>
 </head>
 <body>
+<a href="employer_dashboard.php">Return</a>
     <h1>My Job Posts</h1>
     <div id="job-list">
         <?php

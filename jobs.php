@@ -1,9 +1,7 @@
 <?php
-// Start the session at the very beginning of the script
 session_start();
 
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id'], $_SESSION['role']) || $_SESSION['role'] !== 'employee') {
     die("
         <a href='index.html'>Return</a>
         <a href='register.html'>Register</a>
@@ -77,7 +75,6 @@ if (!isset($_SESSION['user_id'])) {
     <h1>Available Jobs</h1>
     <div id="job-list">
         <?php
-        // Include the config file for database connection
         include('config.php');
 
         // Fetch all job listings
@@ -88,7 +85,7 @@ if (!isset($_SESSION['user_id'])) {
             $employee_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
             if ($employee_id) {
-                // Fetch if the user has already liked the job
+                // Fetch like status
                 $like_result = $conn->query("SELECT liked FROM likes WHERE job_id = $job_id AND employee_id = $employee_id");
                 $liked = ($like_result && $like_result->num_rows > 0) ? $like_result->fetch_assoc()['liked'] : 0;
 
@@ -99,6 +96,11 @@ if (!isset($_SESSION['user_id'])) {
                 // Fetch average rating
                 $rating_result = $conn->query("SELECT AVG(rating) AS avg_rating FROM feedback WHERE job_id = $job_id");
                 $average_rating = $rating_result->fetch_assoc()['avg_rating'] ?? 0;
+
+                // Check if the employee has already submitted feedback
+                $feedback_check = $conn->query("SELECT * FROM feedback WHERE job_id = $job_id AND employee_id = $employee_id");
+                $has_feedback = $feedback_check->num_rows > 0;
+                $submit_button_text = $has_feedback ? "Edit Feedback" : "Submit Feedback";
 
                 echo "<div class='job'>";
                 echo "<h2>" . $job['title'] . "</h2>";
@@ -111,6 +113,7 @@ if (!isset($_SESSION['user_id'])) {
 
                 // Star Rating system and Comment form
                 echo "<div class='star-rating'>";
+
                 for ($i = 5; $i >= 1; $i--) {
                     echo "<input type='radio' id='star-$i-{$job['id']}' name='rating-{$job['id']}' value='$i' />";
                     echo "<label for='star-$i-{$job['id']}'>★</label>";
@@ -118,10 +121,11 @@ if (!isset($_SESSION['user_id'])) {
                 echo "</div>";
 
                 // Comment text area
-                echo "<textarea id='comment-{$job['id']}' placeholder='Leave a comment'></textarea>";
+                $existing_comment = ($has_feedback) ? $feedback_check->fetch_assoc()['comment'] : "";
+                echo "<textarea id='comment-{$job['id']}' placeholder='Leave a comment'>{$existing_comment}</textarea>";
 
-                // Submit feedback button
-                echo "<button onclick='submitFeedback(" . $job['id'] . ")'>Submit Feedback</button>";
+                // Submit/Edit feedback button
+                echo "<button onclick='submitFeedback(" . $job['id'] . ")'>$submit_button_text</button>";
 
                 // Display the average rating
                 echo "<p id='average-rating-{$job['id']}'>Average Rating: " . round($average_rating, 1) . "</p>";
@@ -129,8 +133,32 @@ if (!isset($_SESSION['user_id'])) {
             } else {
                 echo "Error: User ID is missing.";
             }
+            
+                // After displaying the job information and feedback system
+                echo "<a href='apply.php?job_id={$job['id']}'><button>Apply</button></a>";
         }
         ?>
     </div>
 </body>
+<script>
+// JavaScript to handle feedback submission
+function submitFeedback(jobId) {
+    const rating = document.querySelector(`input[name="rating-${jobId}"]:checked`).value;
+    const comment = document.getElementById(`comment-${jobId}`).value;
+
+    fetch('submit_feedback.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `job_id=${jobId}&rating=${rating}&comment=${comment}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        document.getElementById(`average-rating-${jobId}`).innerText = `Average Rating: ${data.average_rating}`;
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
 </html>

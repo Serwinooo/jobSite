@@ -18,7 +18,7 @@ if ($_SESSION['role'] != 'employee') {
     <nav>
         <ul>
             <li><a href="jobs.php">View Jobs</a></li>
-            <li><a href="leave_review.php">Leave a Review</a></li>
+            <li><a href="leave_review.php">Profile</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
     </nav>

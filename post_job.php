@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Post a Job</title>
 </head>
 <body>
+<a href="employer_dashboard.php">Return</a>
     <h1>Post a Job</h1>
     <form action="post_job.php" method="POST">
         <label for="title">Job Title:</label>
