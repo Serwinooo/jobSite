@@ -55,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Apply for Job</title>
 </head>
 <body>
+<a href="employee_dashboard.php">Return</a>
     <h1>Apply for Job</h1>
     <form action="apply.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="job_id" value="<?php echo $job_id; ?>">

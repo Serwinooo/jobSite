@@ -21,6 +21,7 @@ $applications = $conn->query("SELECT a.*, j.title FROM applications a
     <title>View Applications</title>
 </head>
 <body>
+<a href="employer_dashboard.php">Return</a>
     <h1>Job Applications</h1>
     <table border="1">
         <tr>

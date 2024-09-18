@@ -19,6 +19,7 @@ include('config.php');
     <nav>
         <ul>
             <li><a href="post_job.php">Post a Job</a></li>
+            <li><a href="employer_application.php">View Applicants</a></li>
             <li><a href="view_own_jobs.php">View My Job Posts</a></li>
             <li><a href="view_jobs.php">View Available Jobs</a></li>
             <li><a href="logout.php">Logout</a></li>
